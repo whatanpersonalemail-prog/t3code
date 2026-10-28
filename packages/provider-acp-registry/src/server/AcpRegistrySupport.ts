@@ -1854,7 +1854,12 @@ export const makeAcpRegistryCatalog = Effect.fn("AcpRegistryCatalog.make")(funct
             Effect.tap(() => consumePreparedBinaryReservation(agent.id)),
           ),
         );
-        args = distribution.args;
+        // Antigravity crashes with "Group . not found" when passed --uid=.
+        // Filter it out until Antigravity handles it gracefully.
+        args =
+          agent.id === "antigravity-acp"
+            ? distribution.args.filter((arg) => !arg.startsWith("--uid="))
+            : distribution.args;
       }
 
       const baseSpawnEnvironment = {
